@@ -3,3 +3,11 @@ alter table table_name modify column_name varchar(200) not null;
 
 Modify the default property of column in  mySql is :-
 alter table table_name alter column column_name set default "desired_input";
+
+auto increment key which can be used for setting the primary key automatically:
+create table Student( id int primary key auto_increment,
+name varchar(200) not null default "vivek",);
+
+ALias is used to change the name of the column on our desired output
+select name as NAme , email as EmailId from table_name;
+
