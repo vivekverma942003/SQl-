@@ -1,5 +1,4 @@
 modify the not null property in SQL table is:-
-
 alter table table_name modify column_name varchar(200) not null;
 
 Modify the default property of column in  mySql is :-
