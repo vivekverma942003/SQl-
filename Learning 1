@@ -17,3 +17,8 @@ select concat("vivek","kumar","verma")
 select concat(name,email,address) from Students;
 
 
+Finding the distinct elements from the table or column the query is:-
+select distinct firstname, lastname from the tablename;
+
+LIKE keyword:-
+Like keyword is used to extract the values which have the matching words given in %keyword%;
