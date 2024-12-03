@@ -22,3 +22,102 @@ select distinct firstname, lastname from the tablename;
 
 LIKE keyword:-
 Like keyword is used to extract the values which have the matching words given in %keyword%;
+select * from tableName where column_name like "%viv%";
+if we want to find all the names or data whose length is n then we have to use n whitespaces;
+select * from students where name like "___"; select first_name from students where first_name like "___";
+query to select where first name starts with A;
+select first_name from students where first_name like "A%";
+query where first name ends with A:
+select first_name from students where first_name like "%A";
+
+LIMIT KEYWORD:-
+Limit keyword is used to limit the number of results;
+select * from table_name limit 3 :- this is used to pick top 3 results
+select first_name from students limit n1,n2:- This is used to pick n2 results starting from the range n1;
+
+nth highest salary:-
+select first_name from students order by salary desc limit 1;
+
+
+COUNT FUNCTION :-
+most powerful function in sql 
+1: count(*) it is used to count all the rows in a table regardless of the null values 
+ select count(*) from students;
+
+2: count(cloumn_name) it is used to count all the rows where the column has non null values;
+ select count(first_name) from students;
+3: count(distinct cloumn_name):- It is used to count all the rows with distinct values
+ select count(distinct first_name) from students;
+ select count(*) from students where dob>"2000-04-
+13";
+
+
+GROUP BY FUNCTION:-
+
+
+Min and MAx function :-
+select max(fees) from students;
+select min(fees) from students;
+SUB QUERIES FOR MAXIMUM AND MINIMUM QUERIES:
+select first_name from students where fees=(select max(fees) from students);
+select first_name from students where fees=(select mIN(fees) from students);
+
+min and max functions are also used with the strings column which are sorted in a lexicographically order 
+ select min(first_name) from students;
+
+SUM AND AVG function in mysql:-
+select sum(fees) from students;
+select avg(fees) from students;
+Question 1) if we wants to find the sum or avg of salary of defferent departments then we can use 
+Select department sum(salary) from students group by department;
+ select dob, sum(fees) from students group by dob; 
+
+DECIMAL DATA TYPES:
+the decimal data type is used to create data type that takes the defined number of inputs
+score decimal(n1,n2): - This means the score contains n1-n2 digits before the decimal and n2 digits after the decimal;
+floats :- it can take 7 digits of integer and 4 bytes of memory
+double :- it can take 15 digits of integer and 8 bytes of memory
+defining the data in the table is:-
+create table vivek(f float, d decimal); 
+
+DATE AND TIME 
+FORMAT : YEAR:MONTH:DATE:
+TIME:  HOUR:MINTUE: SECONDS:
+create table samay (t time , d date);
+insert into samay("10:10:10", "2003-09-01");
+
+CURR DATE AND CURR TIME :-
+select curdate();
+select curtime();
+select now();
+insert into samay values(curtime(), curdate());
+
+getting dayname , day of week and day of month
+select dayname("2003-09-04");  this gives sun,mon,sat etc;
+select dayofmonth("2003-09-04"); this gives 09 to 12;
+select dayofweek("2003-09-09"); this gives 0 to 7 as a output;
+select d, dayname(d) from samay;
+select d, monthname(d) from samay;
+
+It prints the difference of dates between the two dates select datediff("2003-09-04","2004-09-03");
+it add the number of days in the current date 🧑‍💻 select date_add("2003-09-09", interval 65 day);
+it subtract the number of days in the current date 💻 select date_sub("2003-09-09", interval 65 day);
+💻 select date_add(curdate(), interval 15 day);
+💻 select timediff("10:10:10","09:09:09");
+
+🎖️  DEFAULT AND updated_time when we will add it will add the defaul current time and when we update it then it will also update the timing of that content
+💻 mysql> CREATE TABLE blogs (
+    ->     blog VARCHAR(140),
+    ->     ct DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ->     ut DATETIME ON UPDATE CURRENT_TIMESTAMP
+    -> );
+
+🎖️ IN AND NOT IN
+
+
+
+
+
+
+
+
