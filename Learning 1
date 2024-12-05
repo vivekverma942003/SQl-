@@ -141,10 +141,28 @@ Query 💻:-select * from students where first_name in("David","Ian","Jack");
 💻  select * from students where first_name not  like "%A";
 
 🎖️ CONSTRAINTS :- the rules and regulations that we put in defining the data is known as constraints;
-Rule 1)  UNIQUE
- 
+Rule 1)  UNIQUE: This key is used when we have to make multiple columns unique because  we can make only one primary key in any table:
+💻  create table students(
+name varchar(240) unique;
+)
+
+Rule 2) check this is used to check the insertion of the data:
+   create table constraints(
+ 💻   -> id int primary key,
+    -> name varchar(240) unique,
+    -> phone varchar(15) unique check(length(phone)>=10)
+    -> );
+
+🎖️ ALTER : Adding new column to the table:
+ 💻 alter table students add column roll_no int;
+ 💻 alter table students modify column roll_no int default 101;
+ 💻  alter table simple modify column st_id varchar(28);
 
 
+🎖️ Delete a column :alter table students drop column roll-no; 
+🎖️ Rename a column name :-
+    alter table students rename name to first_name;
 
 
-
+🎖️ Rename a table name:
+  alter table students rename to total_students;
