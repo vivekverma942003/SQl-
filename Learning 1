@@ -113,9 +113,36 @@ it subtract the number of days in the current date 💻 select date_sub("2003-09
     -> );
 
 🎖️ IN AND NOT IN
+simple hai jo present ho use show karana hoga to IN use karenge aur present wale ko ignore krna ho to Not in use karenge;
+Query 💻:-select * from students where first_name in("David","Ian","Jack");
+💻   select * from students where first_name not in("David","Ian","Jack");
+
+🎖️ BETWEEN WORKS FOR RANGES:
+💻 select * from employee where salary between 400 and 600;
 
 
+🎖️ NTH HIGHEST SALARY QUERY:
+💻  SELECT DISTINCT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET n-1;
+💻   SELECT DISTINCT salary FROM employees e1 WHERE (SELECT COUNT(DISTINCT salary) FROM employees e2 WHERE e2.salary > e1.salary) = n - 1;
+💻 SELECT salary FROM (SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rank FROM employees) ranked WHERE rank = n;
+💻  SELECT salary FROM (SELECT salary, ROW_NUMBER() OVER (ORDER BY salary DESC) AS rank FROM employees) numbered WHERE rank = n;
 
+
+🎖️ CASE: This is used same as the if else condition to make a category as a new row and assign the category according to the certain conditions.
+💻 select first_name, fees, case when fees>40000 then "high fees" else "low fees" end as "salary category" from students;
+
+💻 select first_name, fees, case when fees>=20000 then "lower salary" when fees>=40000 then "lowfees" else "high fees" end as "salary category" from students;
+
+🎖️ IS NULL:- This is used to select all the column which has the null values;
+💻   select * from students where first_name is null;
+💻   select * from students where first_name is not null;
+
+🎖️ NOT LIKE "A%":- This is used to check whether the condition is fullfilled by the same pattern or not 
+💻  select * from students where first_name not  like "%A";
+
+🎖️ CONSTRAINTS :- the rules and regulations that we put in defining the data is known as constraints;
+Rule 1)  UNIQUE
+ 
 
 
 
