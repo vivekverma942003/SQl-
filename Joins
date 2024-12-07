@@ -1,4 +1,34 @@
 Joins : They are used when we have to retrieve the data from multiple tables in  our query.
 
-Inner Joins:- It is used to show the table from both table which are matching the given condition. (Intersection of the  two tables)..
-Select 
+Inner Joins Or Join:- It is used to show the table from both table which are matching the given condition. (Intersection of the  two tables)..
+select employee.emp_name, department.dept_name from employee join department on employee.dept_id=department.dept_id;
+whenever we need join we need to specify two tables on both side of joins..
+🤔 Fetch the employee name and their department name from the employee and department table;
+💻select e.emp_name, d.dept_name from employee e join department d on e.dept_id=d.dept_id;
+
+🎖️Left Join : It shows all the values in the left table whether the values are present in the right table or not 
+🎖️ Left Join = Inner Join + values Left in the left table..
+💻 select e.emp_name, d.dept_name from employee e left join department d on e.dept_id=d.dept_id;
+
+🎖️ Right Join : It shows all the values of the right table and values that matches in the left table;
+🎖️ Right Join = Inner Join + values left in the right table
+💻 select e.emp_name, d.dept_name from employee e right join department d on e.dept_id=d.dept_id;
+
+
+🎖️ Full Join = Inner Join + remaining Left Join  + remaining Right Join
+💻 select e.emp_name, d.dept_name from employee e left join department d on e.dept_id=d.dept_id
+union select e.emp_name, d.dept_name from employee e right join department d on e.dept_id=d.dept_id;
+
+🎖️ Cross Join in Sql: every record in table1 will be matched with every record in the right table 
+🎖️ Cartesian Product
+🎆 Cross Join does need on key word or where because it does not execute any condition matching it just find the product m*n;
+💻 select e.emp_name, d.dept_name from employee e cross join department d;
+
+
+
+🎖️ Natural Join :- In natural join the joining condition will be decided by the sql not by the user
+🎆 No need to define on keyword it will decide for the condition based on the column name  which is same in both tables if two tables does not share the same column name
+   it will not work
+🎆 If the two columns with the same name does not have the same value then it will not work and it will return a cartesian product
+
+🎖️ Self join :- When we perform join in the same table then it is known as self join and their is not keyword in the self join like other joins 
