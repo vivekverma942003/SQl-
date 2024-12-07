@@ -1,0 +1,4 @@
+Joins : They are used when we have to retrieve the data from multiple tables in  our query.
+
+Inner Joins:- It is used to show the table from both table which are matching the given condition. (Intersection of the  two tables)..
+Select 
