@@ -1,0 +1,22 @@
+❓select employe whose salary is greater than the avg salary of the all employeess;
+💻 select emp_name from employee where salary>(select avg(salary) from employee);
+
+❓Scalar Subquery :- This is the subquery which return single row and single column simply which uses aggregate function
+
+❓Multiple Row Subquery:-
+❓Write a query to find the highest salary in each department of the field;
+
+💻 select * from employee where (dept_id,salary) in (select dept_id,max(salary) from employee group by dept_id);
+
+💻 select * from employee where (dept_name,salary) in (select dept_name , max(salary) from employee group by dept_name);
+
+❓Find the department who do not have any employee
+
+💻 select * from department where not in (select distinct dept_names from employee);
+
+❓Find the employee in  each department whose salary is greater than the average salary of that department;
+💻 1) select avg(salary) from employee where department="specific department";
+💻 2) select employe from employe where department="specific department"  and salary>((1 query))
+
+🧑‍💻 Hard Coded: select emp_name from employee where salary>(select avg(salary) from employee where dept_id="D1") and dept_id="D1";
+🧑‍💻 select * from employee e1 where salary>(select avg(salary) from Employee e2 where e1.dept_id=e2.dept_id);
