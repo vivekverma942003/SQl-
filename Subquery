@@ -20,3 +20,27 @@
 
 🧑‍💻 Hard Coded: select emp_name from employee where salary>(select avg(salary) from employee where dept_id="D1") and dept_id="D1";
 🧑‍💻 select * from employee e1 where salary>(select avg(salary) from Employee e2 where e1.dept_id=e2.dept_id);
+
+❓Find department who do not have any employee?...
+💻 select * from department d where not exits (select 1 from employee e where e.dept_name=d.dept_name);
+
+
+
+🎖️SELECT ANY_NUMBER:-
+                    This query is used to find the existence of rows in a table without retrieving the actual data of the table which makes it faster for debugging..
+                💻 select 1 from employee.. || select 420 from employee
+
+❓FETCH ALL THE EMPLOYEE AND GIVE REMARKS WHO EARNED MORE THAN THE AVERAGE SALARY OF ALL THE EMPLOYEE :-
+        🎖️ SELECT :-query which mainly involves the case when and then else statement to execute some points based on conditions...
+        💻 select *, (case when salary>(select avg(salary) from employee) then "Higher Salary" else "Lower Salary" end) as remarks from employee;
+
+❓Find the stores who have sold more units than the average sold units by all the stores:
+        💻 select store_name, sum(quantity) from sales group by store_name having sum(quantity) > (select avg(quantity) from sales);
+
+❓Insert data to employee history table and make sure that duplicate data are not inserted in that table.
+
+        💻 insert into employee_history select e.emp_id, e.emp_name, d.dept_name, e.salary, d.location from employee e join
+            department d on d.dept_name=e.dept_name where not exits (select 1 from employee_history eh where eh.emp_id=e.emp_id);
+
+❓
+  
