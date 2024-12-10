@@ -13,6 +13,7 @@ Abstracts Complexity:
 Hides the complexity of the database schema by presenting a simplified interface to users.
 Non-Persistent Object:
 
+
 🎖️🎖️Materialize View:-
 Key Features of Materialized Views
 Stored Data:
@@ -23,3 +24,17 @@ Performance Optimization:
 Particularly useful for aggregations, joins, and complex queries that are resource-intensive to compute repeatedly.
 Indexes:
 Since materialized views store data, you can create indexes on them to further enhance performance.
+
+💻 create materialzed view optimised view as select * from the employee;
+
+
+
+
+
+
+
+
+
+
+
+
