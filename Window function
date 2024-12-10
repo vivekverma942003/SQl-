@@ -1,0 +1,11 @@
+ Structure of the window function are :-
+
+<function_name>(<expression>) OVER (
+    [PARTITION BY column]
+    [ORDER BY column]
+    [frame_specification]
+)
+
+
+
+
