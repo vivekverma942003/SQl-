@@ -1,0 +1,25 @@
+View in table:-
+Logical Representation:It only store the structure of the table not the actual data of the table
+No Data Storage:
+Simplifies Queries:
+Complex queries can be encapsulated in a view, making it easier to reuse and write concise SQL statements.
+Data Security:
+Views can restrict access to specific columns or rows, providing a layer of security for sensitive data.
+Dynamic Updates:
+If the underlying tables are updated, the view reflects these changes in real-time (except in certain cases like materialized views).
+Query Optimization:
+Views can simplify and optimize frequently used queries for performance improvements.
+Abstracts Complexity:
+Hides the complexity of the database schema by presenting a simplified interface to users.
+Non-Persistent Object:
+
+🎖️🎖️Materialize View:-
+Key Features of Materialized Views
+Stored Data:
+The result of the query is physically stored in the database, making subsequent queries faster.
+Periodic Refresh:
+The data in a materialized view can become stale as the underlying tables change. You can schedule updates or refresh the materialized view manually or automatically.
+Performance Optimization:
+Particularly useful for aggregations, joins, and complex queries that are resource-intensive to compute repeatedly.
+Indexes:
+Since materialized views store data, you can create indexes on them to further enhance performance.
