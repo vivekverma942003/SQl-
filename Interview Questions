@@ -1,0 +1,12 @@
+1️⃣ Find the second highest salary:-
+	select max(sal) where sal not in ( max(sal) from table_name);    
+	select max(sal) where sal<(select max(sal) from table_name);
+
+1️⃣ select Department wise highest salary
+	select max(sal) , dept_no from table_name group by dept_no;
+
+1️⃣ count the number of employees in each department 
+	select count(*) , dept_no group by dept_no;
+
+1️⃣ To display the data in alternative order
+	select 
