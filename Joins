@@ -32,3 +32,16 @@ union select e.emp_name, d.dept_name from employee e right join department d on 
 🎆 If the two columns with the same name does not have the same value then it will not work and it will return a cartesian product
 
 🎖️ Self join :- When we perform join in the same table then it is known as self join and their is not keyword in the self join like other joins 
+
+
+
+
+
+
+
+
+
+
+
+
+
