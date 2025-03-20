@@ -10,3 +10,43 @@
 
 1️⃣ To display the data in alternative order
 	select 
+
+Nth highest salary:
+1) select salary from employee order by salary desc limit 1,1;
+2) select salary from employee e1 where n-1 =(select count(distinct salary) from employee e2 where e1.salary>e2.salary);
+3) using the subquery which is the standard for the finding the second highest salary
+
+Find all the employess whose name contains letter "a"
+SELECT * 
+FROM employees
+WHERE name LIKE '%a%';
+
+Find all the duplicate data;
+SELECT name, COUNT(*)
+FROM employees
+GROUP BY name
+HAVING COUNT(*) > 1;
+
+
+
+
+Find all the employees who earns more than the average salary of their department 
+
+SELECT e.*
+FROM employees e
+WHERE e.salary > (
+    SELECT AVG(e2.salary)
+    FROM employees e2
+    WHERE e2.department_id = e.department_id
+);
+
+
+Write a query to find the most frequent value occuring in the column
+SELECT department_id, COUNT(*) AS frequency
+FROM employees
+GROUP BY department_id
+ORDER BY frequency DESC
+LIMIT 1;
+
+
+
