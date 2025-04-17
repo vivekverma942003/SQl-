@@ -1,0 +1,6 @@
+Serial dataTypes: - This is the data types which defines integer data type behind the scene while autoincrementing
+If we wants to define the bigint data type then we can declare as BIGSERIAL
+
+Cascading in Postgresql:- 
+
+
