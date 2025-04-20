@@ -1,0 +1,161 @@
+create table Person(
+  id serial primary key,
+  username varchar(255),
+  dob date not null,
+  gender CHAR(1) CHECK (gender IN ('M', 'F', 'O')) NOT NULL,
+  nationality varchar(30),
+  email varchar(255) not null unique,
+  phoneNumber varchar(12) unique,
+  address varchar(255) not null,
+  city varchar(50),
+  "state" varchar(50),
+  country varchar(50),
+  pincode varchar(10)
+)
+
+create table Passport(
+  id serial primary key,
+  passport_number varchar(20) not null unique,
+  issude_date date not null,
+  expiry_date date not null,
+  place varchar(255),
+  passport_type varchar(20) check (passport_type in ('ordinary', 'diplomatic','Official')),
+  national varchar(255),
+  person_id int not null unique,
+  foreign key (person_id) references Person(id) on delete cascade
+)
+
+INSERT INTO Person (username, dob, gender, nationality, email, phoneNumber, address, city, "state", country, pincode)
+VALUES
+('john_doe', '1985-02-15', 'M', 'American', 'john.doe@email.com', '1234567890', '123 Elm St, Apt 101', 'New York', 'NY', 'USA', '10001'),
+('jane_smith', '1990-05-22', 'F', 'British', 'jane.smith@email.com', '1234567891', '456 Oak St, Apt 202', 'London', 'England', 'UK', '20001'),
+('emily_jones', '1978-07-19', 'F', 'Canadian', 'emily.jones@email.com', '1234567892', '789 Pine St', 'Toronto', 'ON', 'Canada', '30001'),
+('michael_brown', '1995-01-12', 'M', 'Australian', 'michael.brown@email.com', '1234567893', '101 Maple Rd', 'Sydney', 'NSW', 'Australia', '40001'),
+('susan_white', '1983-08-03', 'F', 'American', 'susan.white@email.com', '1234567894', '202 Birch St', 'Los Angeles', 'CA', 'USA', '50001'),
+('alex_green', '1992-11-29', 'M', 'German', 'alex.green@email.com', '1234567895', '303 Cedar Ave', 'Berlin', 'Berlin', 'Germany', '60001'),
+('lisa_black', '1987-03-25', 'F', 'Italian', 'lisa.black@email.com', '1234567896', '404 Pine Rd', 'Rome', 'Lazio', 'Italy', '70001'),
+('daniel_harris', '1998-09-17', 'M', 'Indian', 'daniel.harris@email.com', '1234567897', '505 Oak Blvd', 'Mumbai', 'MH', 'India', '80001'),
+('sophia_miller', '1991-12-05', 'F', 'French', 'sophia.miller@email.com', '1234567898', '606 Cedar Dr', 'Paris', 'Île-de-France', 'France', '90001'),
+('william_lee', '1980-04-09', 'M', 'Singaporean', 'william.lee@email.com', '1234567899', '707 Redwood Ln', 'Singapore', 'Singapore', 'Singapore', '10001');
+
+select * from Person;
+
+INSERT INTO Passport (passport_number, issude_date, expiry_date, place, passport_type, national, person_id)
+VALUES
+('P1234567890', '2020-01-01', '2030-01-01', 'New York', 'ordinary', 'American', 1),
+('P1234567891', '2021-02-10', '2031-02-10', 'London', 'diplomatic', 'British', 2),
+('P1234567892', '2019-03-15', '2029-03-15', 'Toronto', 'ordinary', 'Canadian', 3),
+('P1234567893', '2022-04-12', '2032-04-12', 'Sydney', 'Official', 'Australian', 4),
+('P1234567894', '2018-05-30', '2028-05-30', 'Los Angeles', 'ordinary', 'American', 5),
+('P1234567895', '2020-06-18', '2030-06-18', 'Berlin', 'diplomatic', 'German', 6),
+('P1234567896', '2021-07-23', '2031-07-23', 'Rome', 'Official', 'Italian', 7),
+('P1234567897', '2020-08-09', '2030-08-09', 'Mumbai', 'ordinary', 'Indian', 8),
+('P1234567898', '2022-09-14', '2032-09-14', 'Paris', 'diplomatic', 'French', 9),
+('P1234567899', '2021-10-25', '2031-10-25', 'Singapore', 'Official', 'Singaporean', 10);
+
+INSERT INTO Person (username, dob, gender, nationality, email, phoneNumber, address, city, "state", country, pincode)
+VALUES
+('Anjali Sharma', '1998-11-25', 'F', 'Indian', 'anjali.sharma@email.com', '9876543210', 'DLF Phase 3', 'Gurgaon', 'HR', 'India', '122002'),
+('Rohit Mehta', '1995-06-10', 'M', 'Indian', 'rohit.m@email.com', '9123456780', '123 Park Street', 'Kolkata', 'WB', 'India', '700017'),
+('Sneha Patil', '2000-01-19', 'F', 'Indian', 'sneha.patil@email.com', '9988776655', 'Bandra West', 'Mumbai', 'MH', 'India', '400050'),
+('Aman Jain', '1992-09-30', 'M', 'Indian', 'aman.j@email.com', '9001122334', 'MG Road', 'Bengaluru', 'KA', 'India', '560001'),
+('Pooja Reddy', '1999-03-08', 'F', 'Indian', 'pooja.reddy@email.com', '9786543211', 'Hitech City', 'Hyderabad', 'TG', 'India', '500081');
+
+INSERT INTO Passport (passport_number, issude_date, expiry_date, place, passport_type, national, person_id)
+VALUES ('P884043','2025-04-20', '2025-06-010','India','Official', 'Up',11);
+
+ -- Find All People With Passports Expiring in the Next 6 Months:
+ select * from Person p1 join Passport p2 on p2.person_id=p1.id where p2.expiry_date between current_date and current_date + interval
+ '6 months';
+
+ -- Get the Count of People by Gender Who Have Passports:
+    select gender , count(*) as countP from Passport p1 join Person p2 on p2.id=p1.person_id group by gender;
+   
+ -- Find People with Missing Passports (Not Linked to Any Passport:
+
+   select * from Passport pt right join Person p on pt.person_id=p.id where pt.person_id is null;
+
+ -- Find Passports with Specific Type (Diplomatic) and Their Associated Person
+select * from Person p join Passport pt on p.id=pt.person_id where pt.passport_type='diplomatic';
+ 
+ -- Get People from a Specific Country (e.g., USA) and Their Passport Expiry Date:
+select p.username,p.country from Person p join Passport pt on p.id=person_id group by p.country;
+  
+SELECT p.country,p.username,p.phoneNumber FROM Person p JOIN Passport pt ON p.id = pt.person_id ORDER BY p.country;
+-- get the country name and ph
+select p1.country , STRING_AGG(p1.username,', ') as countryName, STRING_AGG(p1.phoneNumber,',') as mobileno from Person p1 join Passport p2 on 
+p1.id=p2.person_id group by p1.country;
+
+ 
+ -- Find People Who Have Passports Issued in a Specific Year (e.g., 2020):
+select p1.username,p1.country from Person p1 join Passport pt on p1.id=pt.person_id 
+where extract ( year from pt.issude_date) =2020;
+ 
+ -- Get People with Official Passport Type and Their Nationality:
+select p2.passport_type,p1.nationality from Person p1 join Passport p2 on p1.id=p2.person_id;
+ 
+ -- Find People Who Were Born Before 1990 and Have a Passport Expiring After 2030:
+   select * from Person p1 join Passport p2 on p1.id=p2.person_id where extract(year from p1.dob) <1990 and 
+   extract (year from p2.expiry_date)>2030;
+
+SELECT p.username, p.dob, ps.passport_number, ps.expiry_date
+FROM Person p
+JOIN Passport ps ON p.id = ps.person_id
+WHERE p.dob < '1990-01-01' AND ps.expiry_date > '2030-01-01';
+
+
+ -- Get the Most Recently Issued Passport for Each Person:
+	select * from Person p1 join Passport p2 on p1.id=p2.person_id where p2.issude_date=(
+select max (issude_date) from Passport
+	)
+
+ -- Find the Person with the Oldest Passport (Based on Issue Date):
+select * from Person p1 join Passport p2 on p1.id=p2.person_id where p2.issude_date=(
+select min (issude_date) from Passport
+	)
+
+
+--List the Top 3 Countries with the Most Passports Issued and arrange it in alphabetical order by country_name
+ select * from (SELECT p.country, count(*) as total_count 
+ FROM Person p
+ JOIN Passport ps ON p.id = ps.person_id group by p.country order by total_count desc limit 3) 
+ as top_country  order by country;
+
+-- Find Duplicate Phone Numbers Across Persons (Edge Case Check)
+
+
+--  Find All Passports That Expire Within 10 Years of the Person's Date of Birth
+   select * from Person p1 join Passport p2 on p1.id=p2.person_id  where p2.expiry_date= p1.dob + interval '10 years'
+
+-- Find the Youngest Person With a Passport
+select * from Person p1 join Passport p2 on p1.id=p2.person_id  where p1.dob=(select min(dob) from P)
+
+--  Rank Passports by Expiry Date Within Each Country (Window Function)
+SELECT p.username, p.country, ps.passport_number, ps.expiry_date
+FROM Person p
+JOIN Passport ps ON p.id = ps.person_id
+WHERE (p.country, ps.expiry_date) IN (
+    SELECT p2.country, MIN(ps2.expiry_date)
+    FROM Person p2
+    JOIN Passport ps2 ON p2.id = ps2.person_id
+    GROUP BY p2.country
+);
+
+
+--  List People Whose Passport Nationality Does Not Match Their Person Nationality
+
+
+
+-- List Each Gender’s Most Recently Issued Passport
+
+
+
+-- Average Age of People With Different Passport Types
+
+
+
+--  People Whose Passport Was Issued More Than 5 Years After Their Birth
+
+
+--  List All People and Show "Has Passport" as Yes/No
+
