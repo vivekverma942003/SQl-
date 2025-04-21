@@ -4,3 +4,146 @@ If we wants to define the bigint data type then we can declare as BIGSERIAL
 Cascading in Postgresql:- 
 
 
+
+
+
+create schema Social;
+
+create table Social.Person(
+ id serial primary key,
+ username varchar(50) unique not null,
+ email varchar(100) not null unique,
+ password_hash text not null,
+ fullname varchar(100),
+ is_active boolean default true,
+ create_at timestamp default current_timestamp,
+ updated_at timestamp default current_timestamp
+)
+
+
+create table Social.Profiles(
+	id serial primary key,
+	person_id integer unique not null, --one to one relationship here 
+	bio text,
+	birthdate date,
+	gender varchar(20),
+	created_at timestamp default current_timestamp,
+	updated_at timestamp default current_timestamp,
+	foreign key (person_id) references Social.Person(id) on delete cascade
+)
+
+create table Social.Posts(
+	id serial primary key,
+	person_id int not null, -- one to many relation is here
+	title varchar(100),
+ 	image_url text,
+ 	is_posted boolean default true,
+ 	created_at timestamp default current_timestamp,
+	updated_at timestamp default current_timestamp,
+	foreign key (person_id) references Social.Person(id)
+)
+
+
+create table Social.Group(
+	id serial  primary key,
+	name varchar(100) not null,
+	description text,
+	owner_id int not null,
+	created_at timestamp default current_timestamp,
+	updated_at timestamp default current_timestamp,
+	foreign key (owner_id) references Social.Person(id) on delete cascade
+)
+
+
+create table Social.GroupChat(
+	person_id int not null,
+	group_chat_id int not null,
+	role varchar(20) default 'member',
+	joined_at timestamp default current_timestamp,
+	primary key (person_id,group_chat_id) ,
+	foreign key (person_id) references Social.Person(id) on delete cascade,
+	foreign key (group_chat_id) references Social.Group(id) on delete cascade
+)
+
+
+--now insertin data into the tables;
+INSERT INTO Social.Person (username, email, password_hash, fullname)
+VALUES 
+('arjun_rao', 'arjun.rao@example.com', 'hashedpassword1', 'Arjun Rao'),
+('priya_sharma', 'priya.sharma@example.com', 'hashedpassword2', 'Priya Sharma'),
+('rahul_verma', 'rahul.verma@example.com', 'hashedpassword3', 'Rahul Verma'),
+('ananya_mehta', 'ananya.mehta@example.com', 'hashedpassword4', 'Ananya Mehta'),
+('vijay_singh', 'vijay.singh@example.com', 'hashedpassword5', 'Vijay Singh');
+
+
+INSERT INTO Social.Profiles (person_id, bio, birthdate, gender)
+VALUES 
+(1, 'Traveller and food lover from Bangalore.', '1990-06-15', 'Male'),
+(2, 'Artist and dog mom from Mumbai.', '1994-11-02', 'Female'),
+(3, 'Cricket enthusiast and tech geek.', '1988-03-25', 'Male'),
+(4, 'Classical dancer and chai lover.', '1996-08-10', 'Female'),
+(5, 'Fitness freak and biker from Delhi.', '1992-01-30', 'Male');
+
+
+INSERT INTO Social.Posts (person_id, title, image_url)
+VALUES 
+(1, 'Exploring Hampi!', 'https://example.com/images/hampi.jpg'),
+(2, 'My latest painting', 'https://example.com/images/art.jpg'),
+(3, 'India vs Australia match highlights', 'https://example.com/images/cricket.jpg'),
+(4, 'Dance recital moments', 'https://example.com/images/dance.jpg'),
+(5, 'Leh-Ladakh biking trip', 'https://example.com/images/ladakh.jpg');
+
+
+INSERT INTO Social.Group (name, description, owner_id)
+VALUES 
+('Travel India', 'Group for travel lovers across India', 1),
+('Art & Culture', 'Sharing Indian art, culture and traditions', 2),
+('Cricket Lovers', 'All about cricket discussions and memes', 3),
+('Fitness Freaks', 'Workout and nutrition tips for Indians', 5),
+('Chai Pe Charcha', 'Fun group for casual desi conversations', 4);
+
+
+INSERT INTO Social.GroupChat (person_id, group_chat_id, role)
+VALUES 
+(1, 2, 'member'),
+(2, 3, 'admin'),
+(3, 4, 'member'),
+(4, 1, 'member'),
+(5, 5, 'moderator');
+
+
+select * from Social.GroupChat;
+select * from Social.Person;
+select * from Social.Profiles;
+select * from Social.Group;
+
+--this function filters the person based on the cretation date
+create or replace function  person_before_date(given_date date)
+returns int as $$
+begin 
+ return (select count(*) from Social.Person where create_at>=given_date);
+end
+$$ LANGUAGE plpgsql;
+
+select  person_before_date(current_date);
+
+
+--functions to count the active users from the table
+create or replace function activeUser_count()
+returns int  as  $$
+declare total_count int;
+begin 
+ select count(*) into total_count from Social.Person where is_active=true;
+ return total_count;
+end
+$$ LANGUAGE plpgsql;
+select activeUser_count();
+
+
+
+
+
+
+
+
+
