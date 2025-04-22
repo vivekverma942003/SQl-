@@ -1,0 +1,678 @@
+create table clg.Branch(
+ id serial primary key,
+ name varchar(100) unique not null,
+ branch_hod varchar(100),
+ established_year int check(established_year>1900),
+ course_duration int default 4 check(course_duration>0),
+ total_credits INT CHECK (total_credits > 0),
+ address text
+)
+drop table clg.Student;
+create table clg.Student (
+    id SERIAL PRIMARY KEY,                          
+    name VARCHAR(100) NOT NULL,                    
+    email VARCHAR(100) UNIQUE NOT NULL,            
+    age INT CHECK (age > 0),                       
+    phone_number VARCHAR(15) UNIQUE,
+    date_of_birth DATE NOT NULL,                  
+    branch_id INT,                                 
+    enrollment_year INT NOT NULL,              
+    graduation_year INT,                            
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (branch_id) REFERENCES clg.Branch(id) ON DELETE SET NULL
+)
+
+create table clg.IdCard(
+	id SERIAL PRIMARY KEY,                          
+    student_id INT UNIQUE NOT NULL,                
+    card_number VARCHAR(20) UNIQUE NOT NULL,        
+    issue_date DATE NOT NULL,                      
+    expiry_date DATE NOT NULL,                     
+    barcode VARCHAR(50) UNIQUE NOT NULL,       
+    qr_code TEXT UNIQUE,              
+    FOREIGN KEY (student_id) REFERENCES clg.Student(id) ON DELETE CASCADE
+)
+
+create table clg.Club (
+    id SERIAL PRIMARY KEY,                         
+    name VARCHAR(100) UNIQUE NOT NULL,             
+    description TEXT,                              
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+create table clg.StudentClub (
+    student_id INT NOT NULL,                        
+    club_id INT NOT NULL,                           
+    role VARCHAR(50) DEFAULT 'Member',             
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  
+    PRIMARY KEY (student_id, club_id),            
+    FOREIGN KEY (student_id) REFERENCES clg.Student(id) ON DELETE CASCADE,
+    FOREIGN KEY (club_id) REFERENCES clg.Club(id) ON DELETE CASCADE
+);
+
+
+insert into  clg.Branch (name, branch_hod, established_year, course_duration, total_credits, address)
+values
+('Computer Science', 'Dr. Alice Smith', 1995, 4, 160, 'Block A, Tech Building'),
+('Information Technology', 'Dr. Bob Johnson', 2000, 4, 160, 'Block B, Innovation Hall'),
+('Electronics', 'Dr. Carol Lee', 1990, 4, 160, 'Block C, Circuit Lab');
+
+
+insert into  clg.Student (name, email, age, phone_number, date_of_birth, branch_id, enrollment_year, graduation_year)
+values
+('John Doe', 'john.doe@example.com', 20, '1234567890', '2002-01-15', 1, 2021, 2025),
+('Jane Smith', 'jane.smith@example.com', 19, '1234567891', '2003-05-10', 2, 2022, 2026),
+('Sam Wilson', 'sam.wilson@example.com', 21, '1234567892', '2001-09-20', 3, 2020, 2024);
+
+
+insert into clg.IDCard (student_id, card_number, issue_date, expiry_date, barcode, qr_code)
+values
+(1, 'CS2021001', '2021-09-01', '2025-05-30', 'BARCODE001', 'QRCODE001'),
+(2, 'IT2022001', '2022-09-01', '2026-05-30', 'BARCODE002', 'QRCODE002'),
+(3, 'EC2020001', '2020-09-01', '2024-05-30', 'BARCODE003', 'QRCODE003');
+
+insert into clg.Club (name, description)
+values
+('Coding Club', 'A club for coding enthusiasts.'),
+('Robotics Club', 'A club for building robots and automation systems.');
+
+insert into clg.StudentClub (student_id, club_id, role)
+values
+(1, 1, 'President'),
+(2, 1, 'Member'),
+(3, 2, 'President');
+
+
+create or replace procedure insert_branch
+(name varchar,branch_hod varchar, 
+established_year int,course_duration int,
+total_credits int,address text)
+language  plpgsql as $$
+begin insert into clg.Branch(name,branch_hod,established_year,course_duration,total_credits,address) values
+(name,branch_hod,established_year,course_duration,total_credits,address );
+end;
+$$;
+
+CALL insert_branch('Mechanical Engineering', 'Dr. Thomas Hardy', 1985, 4, 160, 'Block D, Workshop Building');
+
+
+
+CREATE OR REPLACE PROCEDURE update_branch_proc(
+    branch_id INT,
+    new_hod VARCHAR,
+    new_address TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE clg.Branch
+    SET branch_hod = new_hod, address = new_address
+    WHERE id = branch_id;
+END;
+$$;
+
+
+CREATE OR REPLACE PROCEDURE delete_branch_proc(branch_id INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM clg.Branch WHERE id = branch_id;
+END;
+$$;
+
+
+CREATE OR REPLACE PROCEDURE read_branch_proc()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Return all rows from the clg.Branch table
+    RAISE NOTICE 'Branch Table Data:';
+    FOR branch_row IN
+        SELECT * FROM clg.Branch
+    LOOP
+        RAISE NOTICE 'ID: %, Name: %, HOD: %, Established Year: %, Duration: %, Credits: %, Address: %',
+            branch_row.id, branch_row.name, branch_row.branch_hod,
+            branch_row.established_year, branch_row.course_duration,
+            branch_row.total_credits, branch_row.address;
+    END LOOP;
+END;
+$$;
+
+
+
+-- Insert Procedure for Student
+CREATE OR REPLACE PROCEDURE insert_student_proc(
+    student_name VARCHAR, 
+    student_email VARCHAR, 
+    student_age INT, 
+    phone_no VARCHAR, 
+    dob DATE, 
+    branch_id INT, 
+    enroll_year INT, 
+    grad_year INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO clg.Student (name, email, age, phone_number, date_of_birth, branch_id, enrollment_year, graduation_year)
+    VALUES (student_name, student_email, student_age, phone_no, dob, branch_id, enroll_year, grad_year);
+END;
+$$;
+
+-- Update Procedure for Student
+CREATE OR REPLACE PROCEDURE update_student_proc(
+    student_id INT, 
+    new_email VARCHAR, 
+    new_phone VARCHAR, 
+    new_grad_year INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE clg.Student
+    SET email = new_email, phone_number = new_phone, graduation_year = new_grad_year
+    WHERE id = student_id;
+END;
+$$;
+
+-- Delete Procedure for Student
+CREATE OR REPLACE PROCEDURE delete_student_proc(student_id INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM clg.Student WHERE id = student_id;
+END;
+$$;
+
+-- Read Procedure for Student
+CREATE OR REPLACE PROCEDURE read_student_proc()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Return all rows from the clg.Student table
+    RAISE NOTICE 'Student Table Data:';
+    FOR student_row IN
+        SELECT * FROM clg.Student
+    LOOP
+        RAISE NOTICE 'ID: %, Name: %, Email: %, Age: %, Phone: %, DOB: %, Branch ID: %, Enrollment Year: %, Graduation Year: %, Created At: %',
+            student_row.id, student_row.name, student_row.email, student_row.age, 
+            student_row.phone_number, student_row.date_of_birth, student_row.branch_id,
+            student_row.enrollment_year, student_row.graduation_year, student_row.created_at;
+    END LOOP;
+END;
+$$;
+
+-- Insert Dummy Data
+CALL insert_student_proc('Alice Brown', 'alice.brown@example.com', 22, '9876543210', '2001-06-15', 1, 2019, 2023);
+CALL insert_student_proc('Bob Green', 'bob.green@example.com', 21, '9876543211', '2002-07-20', 2, 2020, 2024);
+CALL insert_student_proc('Charlie White', 'charlie.white@example.com', 23, '9876543212', '2000-12-10', 3, 2018, 2022);
+
+-- Update a Record
+CALL update_student_proc(1, 'alice.newemail@example.com', '9999999999', 2024);
+
+-- Delete a Record
+CALL delete_student_proc(3);
+
+-- Read All Records
+CALL read_student_proc();
+
+
+-- CRUD for Branch Table
+
+-- Insert into Branch
+CREATE OR REPLACE PROCEDURE insert_branch_proc(
+    branch_name VARCHAR, 
+    branch_hod VARCHAR, 
+    est_year INT, 
+    course_duration INT, 
+    total_credits INT, 
+    branch_address TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO clg.Branch (name, branch_hod, established_year, course_duration, total_credits, address)
+    VALUES (branch_name, branch_hod, est_year, course_duration, total_credits, branch_address);
+END;
+$$;
+
+-- Update Branch
+CREATE OR REPLACE PROCEDURE update_branch_proc(
+    branch_id INT, 
+    new_hod VARCHAR, 
+    new_address TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE clg.Branch
+    SET branch_hod = new_hod, address = new_address
+    WHERE id = branch_id;
+END;
+$$;
+
+-- Delete Branch
+CREATE OR REPLACE PROCEDURE delete_branch_proc(branch_id INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM clg.Branch WHERE id = branch_id;
+END;
+$$;
+
+-- Read Branch
+CREATE OR REPLACE PROCEDURE read_branch_proc()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    FOR branch_row IN
+        SELECT * FROM clg.Branch
+    LOOP
+        RAISE NOTICE 'Branch ID: %, Name: %, HOD: %, Established Year: %, Course Duration: %, Total Credits: %, Address: %',
+            branch_row.id, branch_row.name, branch_row.branch_hod, branch_row.established_year,
+            branch_row.course_duration, branch_row.total_credits, branch_row.address;
+    END LOOP;
+END;
+$$;
+
+-- CRUD for Student Table
+
+-- Insert into Student
+CREATE OR REPLACE PROCEDURE insert_student_proc(
+    student_name VARCHAR, 
+    student_email VARCHAR, 
+    student_age INT, 
+    phone_no VARCHAR, 
+    dob DATE, 
+    branch_id INT, 
+    enroll_year INT, 
+    grad_year INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO clg.Student (name, email, age, phone_number, date_of_birth, branch_id, enrollment_year, graduation_year)
+    VALUES (student_name, student_email, student_age, phone_no, dob, branch_id, enroll_year, grad_year);
+END;
+$$;
+
+-- Update Student
+CREATE OR REPLACE PROCEDURE update_student_proc(
+    student_id INT, 
+    new_email VARCHAR, 
+    new_phone VARCHAR, 
+    new_grad_year INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE clg.Student
+    SET email = new_email, phone_number = new_phone, graduation_year = new_grad_year
+    WHERE id = student_id;
+END;
+$$;
+
+-- Delete Student
+CREATE OR REPLACE PROCEDURE delete_student_proc(student_id INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM clg.Student WHERE id = student_id;
+END;
+$$;
+
+-- Read Student
+CREATE OR REPLACE PROCEDURE read_student_proc()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    FOR student_row IN
+        SELECT * FROM clg.Student
+    LOOP
+        RAISE NOTICE 'Student ID: %, Name: %, Email: %, Age: %, Phone: %, DOB: %, Branch ID: %, Enrollment Year: %, Graduation Year: %',
+            student_row.id, student_row.name, student_row.email, student_row.age,
+            student_row.phone_number, student_row.date_of_birth, student_row.branch_id,
+            student_row.enrollment_year, student_row.graduation_year;
+    END LOOP;
+END;
+$$;
+
+-- CRUD for IDCard Table
+
+-- Insert into IDCard
+CREATE OR REPLACE PROCEDURE insert_idcard_proc(
+    student_id INT, 
+    card_number VARCHAR, 
+    issue_date DATE, 
+    expiry_date DATE, 
+    barcode VARCHAR, 
+    qr_code TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO clg.IDCard (student_id, card_number, issue_date, expiry_date, barcode, qr_code)
+    VALUES (student_id, card_number, issue_date, expiry_date, barcode, qr_code);
+END;
+$$;
+
+-- Update IDCard
+CREATE OR REPLACE PROCEDURE update_idcard_proc(
+    idcard_id INT, 
+    new_expiry_date DATE, 
+    new_barcode VARCHAR, 
+    new_qr_code TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE clg.IDCard
+    SET expiry_date = new_expiry_date, barcode = new_barcode, qr_code = new_qr_code
+    WHERE id = idcard_id;
+END;
+$$;
+
+-- Delete IDCard
+CREATE OR REPLACE PROCEDURE delete_idcard_proc(idcard_id INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM clg.IDCard WHERE id = idcard_id;
+END;
+$$;
+
+-- Read IDCard
+CREATE OR REPLACE PROCEDURE read_idcard_proc()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    FOR idcard_row IN
+        SELECT * FROM clg.IDCard
+    LOOP
+        RAISE NOTICE 'IDCard ID: %, Student ID: %, Card Number: %, Issue Date: %, Expiry Date: %, Barcode: %, QR Code: %',
+            idcard_row.id, idcard_row.student_id, idcard_row.card_number, idcard_row.issue_date,
+            idcard_row.expiry_date, idcard_row.barcode, idcard_row.qr_code;
+    END LOOP;
+END;
+$$;
+
+-- CRUD for Club Table
+
+-- Insert into Club
+CREATE OR REPLACE PROCEDURE insert_club_proc(
+    club_name VARCHAR, 
+    description TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO clg.Club (name, description)
+    VALUES (club_name, description);
+END;
+$$;
+
+-- Update Club
+CREATE OR REPLACE PROCEDURE update_club_proc(
+    club_id INT, 
+    new_description TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE clg.Club
+    SET description = new_description
+    WHERE id = club_id;
+END;
+$$;
+
+-- Delete Club
+CREATE OR REPLACE PROCEDURE delete_club_proc(club_id INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM clg.Club WHERE id = club_id;
+END;
+$$;
+
+-- Read Club
+CREATE OR REPLACE PROCEDURE read_club_proc()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    FOR club_row IN
+        SELECT * FROM clg.Club
+    LOOP
+        RAISE NOTICE 'Club ID: %, Name: %, Description: %, Created At: %',
+            club_row.id, club_row.name, club_row.description, club_row.created_at;
+    END LOOP;
+END;
+$$;
+
+-- CRUD for StudentClub Table
+
+-- Insert into StudentClub
+CREATE OR REPLACE PROCEDURE insert_studentclub_proc(
+    student_id INT, 
+    club_id INT, 
+    role VARCHAR
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO clg.StudentClub (student_id, club_id, role)
+    VALUES (student_id, club_id, role);
+END;
+$$;
+
+-- Delete from StudentClub
+CREATE OR REPLACE PROCEDURE delete_studentclub_proc(
+    student_id INT, 
+    club_id INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM clg.StudentClub WHERE student_id = student_id AND club_id = club_id;
+END;
+$$;
+
+-- Read StudentClub
+CREATE OR REPLACE PROCEDURE read_studentclub_proc()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    FOR sc_row IN
+        SELECT * FROM clg.StudentClub
+    LOOP
+        RAISE NOTICE 'Student ID: %, Club ID: %, Role: %, Joined At: %',
+            sc_row.student_id, sc_row.club_id, sc_row.role, sc_row.joined_at;
+    END LOOP;
+END;
+$$;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Function to get details of a Branch by ID
+CREATE OR REPLACE FUNCTION get_branch_by_id(branch_id INT)
+RETURNS TABLE(
+    id INT,
+    name VARCHAR,
+    branch_hod VARCHAR,
+    established_year INT,
+    course_duration INT,
+    total_credits INT,
+    address TEXT
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * FROM clg.Branch WHERE id = branch_id;
+END;
+$$;
+
+-- Function to get details of a Student by ID
+CREATE OR REPLACE FUNCTION get_student_by_id(student_id INT)
+RETURNS TABLE(
+    id INT,
+    name VARCHAR,
+    email VARCHAR,
+    age INT,
+    phone_number VARCHAR,
+    date_of_birth DATE,
+    branch_id INT,
+    enrollment_year INT,
+    graduation_year INT
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * FROM clg.Student WHERE id = student_id;
+END;
+$$;
+
+-- Function to list all students in a specific branch
+CREATE OR REPLACE FUNCTION get_students_in_branch(branch_name VARCHAR)
+RETURNS TABLE(
+    student_id INT,
+    student_name VARCHAR,
+    branch_name VARCHAR
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT s.id, s.name, b.name AS branch_name
+    FROM clg.Student s
+    JOIN clg.Branch b ON s.branch_id = b.id
+    WHERE b.name = branch_name;
+END;
+$$;
+
+-- Function to get a student's ID card details by student ID
+CREATE OR REPLACE FUNCTION get_idcard_by_student(student_id INT)
+RETURNS TABLE(
+    id INT,
+    student_id INT,
+    card_number VARCHAR,
+    issue_date DATE,
+    expiry_date DATE,
+    barcode VARCHAR,
+    qr_code TEXT
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT * FROM clg.IDCard WHERE student_id = student_id;
+END;
+$$;
+
+-- Function to list all students and their clubs
+CREATE OR REPLACE FUNCTION get_students_and_clubs()
+RETURNS TABLE(
+    student_id INT,
+    student_name VARCHAR,
+    club_name VARCHAR,
+    role VARCHAR
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT s.id AS student_id, s.name AS student_name, c.name AS club_name, sc.role
+    FROM clg.StudentClub sc
+    JOIN clg.Student s ON sc.student_id = s.id
+    JOIN clg.Club c ON sc.club_id = c.id;
+END;
+$$;
+
+-- Function to get details of clubs a student is part of
+CREATE OR REPLACE FUNCTION get_clubs_by_student(student_id INT)
+RETURNS TABLE(
+    club_name VARCHAR,
+    role VARCHAR,
+    joined_at TIMESTAMP
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT c.name AS club_name, sc.role, sc.joined_at
+    FROM clg.StudentClub sc
+    JOIN clg.Club c ON sc.club_id = c.id
+    WHERE sc.student_id = student_id;
+END;
+$$;
+
+-- Function to get all branches and the number of students in each
+CREATE OR REPLACE FUNCTION get_branch_student_counts()
+RETURNS TABLE(
+    branch_name VARCHAR,
+    student_count INT
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT b.name AS branch_name, COUNT(s.id) AS student_count
+    FROM clg.Branch b
+    LEFT JOIN clg.Student s ON b.id = s.branch_id
+    GROUP BY b.name;
+END;
+$$;
+
+-- Function to get the total number of students in a specific club
+CREATE OR REPLACE FUNCTION get_student_count_in_club(club_name VARCHAR)
+RETURNS TABLE(
+    club_name VARCHAR,
+    student_count INT
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT c.name AS club_name, COUNT(sc.student_id) AS student_count
+    FROM clg.StudentClub sc
+    JOIN clg.Club c ON sc.club_id = c.id
+    WHERE c.name = club_name
+    GROUP BY c.name;
+END;
+$$;
+
+-- Function to get students and their branch details using a join
+CREATE OR REPLACE FUNCTION get_students_with_branch()
+RETURNS TABLE(
+    student_name VARCHAR,
+    student_email VARCHAR,
+    branch_name VARCHAR,
+    branch_hod VARCHAR
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT s.name AS student_name, s.email AS student_email, b.name AS branch_name, b.branch_hod
+    FROM clg.Student s
+    JOIN clg.Branch b ON s.branch_id = b.id;
+END;
+$$;
+
