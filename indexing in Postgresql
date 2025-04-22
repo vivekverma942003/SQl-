@@ -3,3 +3,4 @@ Hash
 Gist
 SpGist
 Gin
+databackup and restore and replication means realtime data addition where as backup is snapshot of the data at a particular time or event
