@@ -676,3 +676,61 @@ BEGIN
 END;
 $$;
 
+
+These indexes will optimize your queries for the given tables:
+
+Student: branch_id, graduation_year
+
+Branch: name, established_year
+
+Club: name, established_year
+
+StudentClub: student_id, club_id
+
+
+
+
+Overloaded Functions
+
+-- Function to get club details by club_id
+CREATE OR REPLACE FUNCTION get_club_details(club_id INT)
+RETURNS TABLE(
+    id INT,
+    name VARCHAR,
+    description TEXT,
+    established_year INT
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT id, name, description, established_year
+    FROM clg.Club
+    WHERE id = club_id;
+END;
+$$;
+
+-- Overloaded function to get club details by club_id and student_id
+CREATE OR REPLACE FUNCTION get_club_details(club_id INT, student_id INT)
+RETURNS TABLE(
+    id INT,
+    name VARCHAR,
+    description TEXT,
+    established_year INT,
+    student_name VARCHAR,
+    role VARCHAR
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        c.id, c.name, c.description, c.established_year,
+        s.name AS student_name, sc.role
+    FROM clg.Club c
+    JOIN clg.StudentClub sc ON c.id = sc.club_id
+    JOIN clg.Student s ON sc.student_id = s.id
+    WHERE c.id = club_id AND s.id = student_id;
+END;
+$$;
+
