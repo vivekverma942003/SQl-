@@ -734,3 +734,50 @@ BEGIN
 END;
 $$;
 
+Joins Functions
+
+CREATE OR REPLACE FUNCTION fetch_students_by_branch(branch_id INT)
+RETURNS TABLE(student_id INT, student_name VARCHAR, branch_name VARCHAR, branch_hod VARCHAR)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        s.id AS student_id,
+        s.name AS student_name,
+        b.name AS branch_name,
+        b.branch_hod AS branch_hod
+    FROM 
+        clg.Student s
+    JOIN 
+        clg.Branch b
+    ON 
+        s.branch_id = b.id
+    WHERE 
+        b.id = branch_id;
+END;
+$$;
+
+
+
+CREATE OR REPLACE FUNCTION fetch_students_by_idcard_issue_year(issue_year INT)
+RETURNS TABLE(student_id INT, student_name VARCHAR, id_card_number VARCHAR, card_issue_date DATE)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        s.id AS student_id,
+        s.name AS student_name,
+        i.card_number AS id_card_number,
+        i.issue_date AS card_issue_date
+    FROM 
+        clg.Student s
+    LEFT JOIN 
+        clg.IdCard i
+    ON 
+        s.id = i.student_id
+    WHERE 
+        EXTRACT(YEAR FROM i.issue_date) = issue_year;
+END;
+$$;
